@@ -1,8 +1,4 @@
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { getDocsThunk } from "../../features/documents/documents";
@@ -38,6 +34,7 @@ export const Table = () => {
           </tr>
         </thead>
         <tbody>
+          {docs.length === 0 && <h2>No documents</h2>}
           {docs.map((doc) => (
             <DocumentItem key={doc.id} document={doc} />
           ))}
