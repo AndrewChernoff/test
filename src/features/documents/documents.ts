@@ -48,23 +48,52 @@ export const documentsSlice = createSlice({
       builder.addCase(addDocThunk.pending, (state) => {
         state.isLoading = true;
       }),
+      builder.addCase(addDocThunk.rejected, (state, action: any) => {
+        state.isLoading = false;
+        state.error = action.error.message || "Some Error!";
+      }),
       builder.addCase(
-        addDocThunk.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.isLoading = false;
-          state.error = action.payload || "Some Error!";
+        removeDocThunk.fulfilled,
+        (state, action: PayloadAction<{ id: string }>) => {
+          state.items = state.items.filter(
+            (doc) => doc.id !== action.payload.id
+          );
         }
       ),
-       builder.addCase(removeDocThunk.fulfilled, (state, action: PayloadAction<{id: string}>) => {
-        state.items = state.items.filter((doc) => doc.id !== action.payload.id);
-      }),
       builder.addCase(removeDocThunk.pending, (state) => {
         state.isLoading = true;
       }),
-      builder.addCase(removeDocThunk.rejected, (state, action: PayloadAction<string | undefined>) => {
-        state.isLoading = false;
-        state.error = action.payload || "Some Error!";
-      });
+      builder.addCase(
+        removeDocThunk.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.isLoading = false;
+          state.error = action.payload || "Unknown error occurred";
+        }
+      ),
+      builder.addCase(
+        updateDocThunk.fulfilled,
+        (state, action: PayloadAction<DocumentType>) => {
+          state.isLoading = false;
+          state.items = state.items.map((el) => {
+            if (el.id === action.payload.id) {
+              return { ...el, ...action.payload };
+            } else {
+              return el;
+            }
+          });
+        }
+      ),
+      builder.addCase(updateDocThunk.pending, (state) => {
+        state.isLoading = true;
+      }),
+      builder.addCase(
+        updateDocThunk.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.isLoading = false;
+          state.error = action.payload || "Unknown error occurred";
+        }
+      )
+      ;
   },
 });
 
@@ -113,16 +142,15 @@ export const addDocThunk = createAsyncThunk<
 });
 
 export const removeDocThunk = createAsyncThunk<
-  {id: string},
-  {id: string},
+  { id: string },
+  { id: string },
   { rejectValue: string }
 >("documents/removeDoc", async (data, { rejectWithValue }) => {
-
   try {
     const res = await api.deleteDocument(data.id);
 
     if (res.data.error_code === 0) {
-      return {id: data.id};
+      return { id: data.id };
     } else if (res.data.error_code === 2004) {
       return rejectWithValue(res.data.error_text);
     }
@@ -134,7 +162,29 @@ export const removeDocThunk = createAsyncThunk<
     return rejectWithValue("Unknown error occurred");
   }
   return rejectWithValue("Unknown error occurred");
+});
 
+export const updateDocThunk = createAsyncThunk<
+  DocumentType,
+  { id: string },
+  { rejectValue: string }
+>("documents/updateDoc", async (data, { rejectWithValue }) => {
+  try {
+    const res = await api.updateDocument(data.id);
+
+    if (res.data.error_code === 0) {
+      return res.data.data;
+    } else if (res.data.error_code === 2004) {
+      return rejectWithValue(res.data.error_text);
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError<ErrorResponse>;
+    if (axiosError.response) {
+      return rejectWithValue(axiosError.response.data.error_text);
+    }
+    return rejectWithValue("Unknown error occurred");
+  }
+  return rejectWithValue("Unknown error occurred");
 });
 
 export default documentsSlice.reducer;
