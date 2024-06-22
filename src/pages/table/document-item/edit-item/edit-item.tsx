@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { Input } from "../../../../components/conrolled/input";
 import { useAppDispatch } from "../../../../hooks/redux-hooks";
 import { updateDocThunk } from "../../../../features/documents/documents";
-import s from "../document-item.module.scss";
 import { DocForm } from "../../../../common/types";
+import s from "../document-item.module.scss";
 
 const DocSchema: ZodType<DocForm> = z.object({
   companySigDate: z.string().min(9, { message: "format is MM/DD/YYYY" }),
@@ -58,7 +58,6 @@ export const EditItem = ({ document, setEditFalse }: PropsType) => {
   }, [document, setValue]);
 
   const updateDockHandler: SubmitHandler<DocForm> = async (data) => {
-    console.log(data);
     const obj = { ...data, id: document.id };
     dispatch(updateDocThunk(obj));
     setEditFalse();

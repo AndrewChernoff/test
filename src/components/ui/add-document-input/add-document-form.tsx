@@ -3,8 +3,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodType, z } from "zod";
 import { Input } from "../../conrolled/input";
-
-import { DevTool } from "@hookform/devtools";
 import { useAppDispatch } from "../../../hooks/redux-hooks";
 import { addDocThunk } from "../../../features/documents/documents";
 import s from "./add-document-form.module.scss";
@@ -54,9 +52,6 @@ export const AddDocumentForm = ({closeModal} : PropsType) => {
   };
 
   return (
-    <>
-      <DevTool control={control} placement="top-right" />
-
       <form className={s.inputContainer} onSubmit={handleSubmit(onSubmit)}>
         <h3>Add document</h3>
         <Input
@@ -132,6 +127,5 @@ export const AddDocumentForm = ({closeModal} : PropsType) => {
           Add
         </Button>
       </form>
-    </>
   );
 };
