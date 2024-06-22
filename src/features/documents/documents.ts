@@ -3,7 +3,7 @@ import { api } from "../../api/api";
 import { AxiosError } from "axios";
 import { DocumentType } from "./types";
 import { ErrorResponse } from "../common-types";
-import { DocFrom } from "../../components/ui/add-document-input/add-document-input";
+import { DocForm } from "../../common/types";
 
 export interface AuthState {
   items: DocumentType[];
@@ -121,7 +121,7 @@ export const getDocsThunk = createAsyncThunk<
 
 export const addDocThunk = createAsyncThunk<
   DocumentType,
-  DocFrom,
+  DocForm,
   { rejectValue: string }
 >("documents/createDoc", async (data, { rejectWithValue }) => {
   const res = await api.createDocument(data);
@@ -166,11 +166,12 @@ export const removeDocThunk = createAsyncThunk<
 
 export const updateDocThunk = createAsyncThunk<
   DocumentType,
-  { id: string },
+  DocumentType,
   { rejectValue: string }
 >("documents/updateDoc", async (data, { rejectWithValue }) => {
   try {
-    const res = await api.updateDocument(data.id);
+    
+    const res = await api.updateDocument(data);
 
     if (res.data.error_code === 0) {
       return res.data.data;

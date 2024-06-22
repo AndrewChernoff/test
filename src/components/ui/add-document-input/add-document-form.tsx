@@ -7,30 +7,25 @@ import { Input } from "../../conrolled/input";
 import { DevTool } from "@hookform/devtools";
 import { useAppDispatch } from "../../../hooks/redux-hooks";
 import { addDocThunk } from "../../../features/documents/documents";
-import s from "./add-document-input.module.scss";
+import s from "./add-document-form.module.scss";
+import { DocForm } from "../../../common/types";
 
-export interface DocFrom {
-  companySigDate: string;
-  companySignatureName: string;
-  documentName: string;
-  documentStatus: string;
-  documentType: string;
-  employeeNumber: string;
-  employeeSigDate: string;
-  employeeSignatureName: string;
-}
-const DocSchema: ZodType<DocFrom> = z.object({
-  companySigDate: z.string().min(10, { message: "format is MM/DD/YYYY" }),
+const DocSchema: ZodType<DocForm> = z.object({
+  companySigDate: z.string().min(9, { message: "format is MM/DD/YYYY" }),
   companySignatureName: z.string().min(1, { message: "field is required" }),
   documentName: z.string().min(1, { message: "field is required" }),
   documentStatus: z.string().min(1, { message: "field is required" }),
   documentType: z.string().min(1, { message: "field is required" }),
   employeeNumber: z.string().min(1, { message: "field is required" }),
-  employeeSigDate: z.string().min(10, { message: "format is MM/DD/YYYY" }),
+  employeeSigDate: z.string().min(9, { message: "format is MM/DD/YYYY" }),
   employeeSignatureName: z.string().min(1, { message: "field is required" }),
 });
 
-export const AddDocumentInput = () => {
+type PropsType = {
+  closeModal: () => void
+}
+
+export const AddDocumentForm = ({closeModal} : PropsType) => {
   const dispatch = useAppDispatch();
 
   const {
@@ -38,7 +33,7 @@ export const AddDocumentInput = () => {
     control,
     formState: { errors },
     reset,
-  } = useForm<DocFrom>({
+  } = useForm<DocForm>({
     resolver: zodResolver(DocSchema),
     defaultValues: {
       companySigDate: "",
@@ -52,9 +47,10 @@ export const AddDocumentInput = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<DocFrom> = async (data: DocFrom) => {
+  const onSubmit: SubmitHandler<DocForm> = async (data) => {
     dispatch(addDocThunk(data));
     reset();
+    closeModal();
   };
 
   return (

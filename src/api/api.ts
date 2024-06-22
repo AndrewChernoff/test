@@ -1,5 +1,6 @@
 import axios from "axios";
 import { PostType } from "./types";
+import { DocumentType } from "../features/documents/types";
 
 const instance = axios.create({
   baseURL: "https://test.v5.pryaniky.com/",
@@ -18,8 +19,8 @@ export const api = {
   deleteDocument(id: string) {///?
     return instance.post(`/ru/data/v3/testmethods/docs/userdocs/delete/${id}`);
   },
-  updateDocument(id: string) {
-    return instance.post(`/ru/data/v3/testmethods/docs/userdocs/set/${id}`);
+  updateDocument(data: DocumentType) {
+    return instance.post(`/ru/data/v3/testmethods/docs/userdocs/set/${data.id}`, data);
   },
 };
 

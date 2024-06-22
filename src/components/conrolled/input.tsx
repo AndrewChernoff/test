@@ -25,8 +25,6 @@ export const Input = <T extends FieldValues>({
 }: PropsType<T>) => {
   const {
     field,
-    /* fieldState: { invalid, isTouched, isDirty },
-    formState: { touchedFields, dirtyFields } */
   } = useController({
     name,
     control,
