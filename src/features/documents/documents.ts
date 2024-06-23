@@ -1,4 +1,4 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { api } from "../../api/api";
 import { AxiosError } from "axios";
 import { DocumentType } from "./types";
@@ -29,47 +29,43 @@ export const documentsSlice = createSlice({
         state.items = action.payload;
       }
     ),
-      builder.addCase(getDocsThunk.pending, (state) => {
-        state.isLoading = true;
-      }),
-      builder.addCase(
+     /*  builder.addCase(
         getDocsThunk.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
+        (state, action: any) => {
           state.isLoading = false;
-          state.error = action.payload || "Some Error!";
+          state.error = action.error.message || "Some Error!";
         }
-      ),
+      ), */
       builder.addCase(
         addDocThunk.fulfilled,
         (state, action: PayloadAction<DocumentType>) => {
+          state.isLoading = false;
           state.items.push(action.payload);
         }
       ),
       builder.addCase(addDocThunk.pending, (state) => {
         state.isLoading = true;
       }),
-      builder.addCase(addDocThunk.rejected, (state, action: any) => {
+      /* builder.addCase(addDocThunk.rejected, (state, action: any) => {
         state.isLoading = false;
         state.error = action.error.message || "Some Error!";
-      }),
+      }), */
       builder.addCase(
         removeDocThunk.fulfilled,
         (state, action: PayloadAction<{ id: string }>) => {
+          state.isLoading = false;
           state.items = state.items.filter(
             (doc) => doc.id !== action.payload.id
           );
         }
       ),
-      builder.addCase(removeDocThunk.pending, (state) => {
-        state.isLoading = true;
-      }),
-      builder.addCase(
+      /* builder.addCase(
         removeDocThunk.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
+        (state, action: any) => {
           state.isLoading = false;
-          state.error = action.payload || "Unknown error occurred";
+          state.error = action.error.message || "Some Error!";
         }
-      ),
+      ), */
       builder.addCase(
         updateDocThunk.fulfilled,
         (state, action: PayloadAction<DocumentType>) => {
@@ -83,17 +79,21 @@ export const documentsSlice = createSlice({
           });
         }
       ),
-      builder.addCase(updateDocThunk.pending, (state) => {
-        state.isLoading = true;
-      }),
-      builder.addCase(
+      /* builder.addCase(
         updateDocThunk.rejected,
         (state, action: PayloadAction<string | undefined>) => {
           state.isLoading = false;
-          state.error = action.payload || "Unknown error occurred";
+          state.error = action.payload || "Some Error!";
         }
-      )
-      ;
+      ), */
+      builder.addMatcher(isAnyOf(getDocsThunk.pending, removeDocThunk.pending, updateDocThunk.pending), state => {
+        state.isLoading = true 
+      }),
+      builder.addMatcher(isAnyOf(getDocsThunk.rejected, removeDocThunk.rejected, updateDocThunk.rejected), (state, action: any) => {
+        state.isLoading = false;
+        state.error = action.error.message || "Some Error!";
+        alert(action.error.message)
+      })
   },
 });
 

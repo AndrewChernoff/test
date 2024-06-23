@@ -16,7 +16,7 @@ export const api = {
   createDocument(data: PostType) {
     return instance.post("ru/data/v3/testmethods/docs/userdocs/create", data);
   },
-  deleteDocument(id: string) {///?
+  deleteDocument(id: string) {
     return instance.post(`/ru/data/v3/testmethods/docs/userdocs/delete/${id}`);
   },
   updateDocument(data: DocumentType) {

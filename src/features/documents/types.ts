@@ -6,6 +6,6 @@ export type DocumentType = {
     documentName: string;
     companySignatureName: string;
     employeeSignatureName: string;
-    employeeSigDate: string; // or Date if you want to parse the date string
-    companySigDate: string;  // or Date if you want to parse the date string
+    employeeSigDate: string;
+    companySigDate: string;
 }
