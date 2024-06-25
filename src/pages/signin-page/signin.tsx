@@ -80,9 +80,9 @@ export const Signin = () => {
           type="submit"
           variant="contained"
           color="primary"
-          style={{ width: "300px", margin: "5px" }}
+          className={s.signInbtn}
         >
-          save
+          Confirm
         </Button>
       </form>
     </>
