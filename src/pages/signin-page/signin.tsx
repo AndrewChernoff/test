@@ -71,7 +71,7 @@ export const Signin = () => {
           name={"password"}
           type="password"
           variant="outlined"
-          placeholder={"user name"}
+          placeholder={"password"}
           className={s.input}
         />
         <br />
