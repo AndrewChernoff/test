@@ -26,7 +26,7 @@ export const Table = () => {
     setOpen(!open);
   };
 
-  const handleClose = (event?: SyntheticEvent, reason?: string) => {
+  const handleClose = (_event?: SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
