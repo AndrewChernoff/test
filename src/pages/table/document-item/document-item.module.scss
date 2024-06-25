@@ -28,4 +28,14 @@
         cursor: pointer;
     }
   }
+
+.editActionBtns {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 55px;
   
+  button {
+    height: 20px;
+  }
+}  

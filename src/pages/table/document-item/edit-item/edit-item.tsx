@@ -1,24 +1,13 @@
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ZodType, z } from "zod";
+import { SubmitHandler } from "react-hook-form";
 import { DocumentType } from "../../../../features/documents/types";
 import { useEffect } from "react";
 import { Input } from "../../../../components/conrolled/input";
 import { useAppDispatch } from "../../../../hooks/redux-hooks";
 import { updateDocThunk } from "../../../../features/documents/documents";
 import { DocForm } from "../../../../common/types";
+import { useAddEditItem } from "../../../../common/hooks/useAddEditItem";
+import { Button } from "@material-ui/core";
 import s from "../document-item.module.scss";
-
-const DocSchema: ZodType<DocForm> = z.object({
-  companySigDate: z.string().min(9, { message: "format is MM/DD/YYYY" }),
-  companySignatureName: z.string().min(1, { message: "field is required" }),
-  documentName: z.string().min(1, { message: "field is required" }),
-  documentStatus: z.string().min(1, { message: "field is required" }),
-  documentType: z.string().min(1, { message: "field is required" }),
-  employeeNumber: z.string().min(1, { message: "field is required" }),
-  employeeSigDate: z.string().min(9, { message: "format is MM/DD/YYYY" }),
-  employeeSignatureName: z.string().min(1, { message: "field is required" }),
-});
 
 type PropsType = {
   document: DocumentType;
@@ -27,24 +16,8 @@ type PropsType = {
 
 export const EditItem = ({ document, setEditFalse }: PropsType) => {
   const dispatch = useAppDispatch();
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-  } = useForm<DocForm>({
-    resolver: zodResolver(DocSchema),
-    defaultValues: {
-      companySigDate: "",
-      companySignatureName: "",
-      documentName: "",
-      documentStatus: "",
-      documentType: "",
-      employeeNumber: "",
-      employeeSigDate: "",
-      employeeSignatureName: "",
-    },
-  });
+
+  const { handleSubmit, control, errors, setValue } = useAddEditItem()
 
   useEffect(() => {
     for (const prop in document) {
@@ -135,9 +108,9 @@ export const EditItem = ({ document, setEditFalse }: PropsType) => {
           className={s.input}
         />
       </td>
-      <td>
-        <button onClick={handleSubmit(updateDockHandler)}>update</button>
-        <button onClick={setEditFalse}>cancel</button>
+      <td className={s.editActionBtns}>
+        <Button variant="contained"  onClick={handleSubmit(updateDockHandler)}>update</Button>
+        <Button variant="contained"  onClick={setEditFalse}>cancel</Button>
       </td>
     </>
   );

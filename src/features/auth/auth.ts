@@ -37,9 +37,11 @@ export const authSlice = createSlice({
       builder.addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
       }),
-      builder.addCase(loginThunk.rejected, (state) => {
+      builder.addCase(loginThunk.rejected, (state, action: any) => {
         state.isLoading = false;
-        state.error = "Some Error!";
+        state.error = action.error.message || "Some Error!";
+        alert(action.error.message)
+
       });
   },
 });

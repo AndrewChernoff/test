@@ -1,4 +1,9 @@
-import { PayloadAction, createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
+import {
+  PayloadAction,
+  createAsyncThunk,
+  createSlice,
+  isAnyOf,
+} from "@reduxjs/toolkit";
 import { api } from "../../api/api";
 import { AxiosError } from "axios";
 import { DocumentType } from "./types";
@@ -9,18 +14,24 @@ export interface AuthState {
   items: DocumentType[];
   isLoading: boolean;
   error: null | string;
+  deletedId: null | string;
 }
 
 const initialState: AuthState = {
   isLoading: false,
   items: [],
   error: null,
+  deletedId: null,
 };
 
 export const documentsSlice = createSlice({
   name: "documents",
   initialState,
-  reducers: {},
+  reducers: {
+    setDeletedId: (state, action: PayloadAction<string | null>) => {
+      state.deletedId = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       getDocsThunk.fulfilled,
@@ -29,13 +40,6 @@ export const documentsSlice = createSlice({
         state.items = action.payload;
       }
     ),
-     /*  builder.addCase(
-        getDocsThunk.rejected,
-        (state, action: any) => {
-          state.isLoading = false;
-          state.error = action.error.message || "Some Error!";
-        }
-      ), */
       builder.addCase(
         addDocThunk.fulfilled,
         (state, action: PayloadAction<DocumentType>) => {
@@ -46,10 +50,6 @@ export const documentsSlice = createSlice({
       builder.addCase(addDocThunk.pending, (state) => {
         state.isLoading = true;
       }),
-      /* builder.addCase(addDocThunk.rejected, (state, action: any) => {
-        state.isLoading = false;
-        state.error = action.error.message || "Some Error!";
-      }), */
       builder.addCase(
         removeDocThunk.fulfilled,
         (state, action: PayloadAction<{ id: string }>) => {
@@ -59,13 +59,6 @@ export const documentsSlice = createSlice({
           );
         }
       ),
-      /* builder.addCase(
-        removeDocThunk.rejected,
-        (state, action: any) => {
-          state.isLoading = false;
-          state.error = action.error.message || "Some Error!";
-        }
-      ), */
       builder.addCase(
         updateDocThunk.fulfilled,
         (state, action: PayloadAction<DocumentType>) => {
@@ -79,21 +72,28 @@ export const documentsSlice = createSlice({
           });
         }
       ),
-      /* builder.addCase(
-        updateDocThunk.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.isLoading = false;
-          state.error = action.payload || "Some Error!";
+      builder.addMatcher(
+        isAnyOf(
+          getDocsThunk.pending,
+          removeDocThunk.pending,
+          updateDocThunk.pending
+        ),
+        (state) => {
+          state.isLoading = true;
         }
-      ), */
-      builder.addMatcher(isAnyOf(getDocsThunk.pending, removeDocThunk.pending, updateDocThunk.pending), state => {
-        state.isLoading = true 
-      }),
-      builder.addMatcher(isAnyOf(getDocsThunk.rejected, removeDocThunk.rejected, updateDocThunk.rejected), (state, action: any) => {
-        state.isLoading = false;
-        state.error = action.error.message || "Some Error!";
-        alert(action.error.message)
-      })
+      ),
+      builder.addMatcher(
+        isAnyOf(
+          getDocsThunk.rejected,
+          removeDocThunk.rejected,
+          updateDocThunk.rejected
+        ),
+        (state, action: any) => {
+          state.isLoading = false;
+          state.error = action.error.message || "Some Error!";
+          alert(action.error.message);
+        }
+      );
   },
 });
 
@@ -145,11 +145,14 @@ export const removeDocThunk = createAsyncThunk<
   { id: string },
   { id: string },
   { rejectValue: string }
->("documents/removeDoc", async (data, { rejectWithValue }) => {
+>("documents/removeDoc", async (data, { dispatch, rejectWithValue }) => {
   try {
+    dispatch(setDeletedId(data.id));
+
     const res = await api.deleteDocument(data.id);
 
     if (res.data.error_code === 0) {
+      dispatch(setDeletedId(null));
       return { id: data.id };
     } else if (res.data.error_code === 2004) {
       return rejectWithValue(res.data.error_text);
@@ -170,7 +173,6 @@ export const updateDocThunk = createAsyncThunk<
   { rejectValue: string }
 >("documents/updateDoc", async (data, { rejectWithValue }) => {
   try {
-    
     const res = await api.updateDocument(data);
 
     if (res.data.error_code === 0) {
@@ -187,5 +189,7 @@ export const updateDocThunk = createAsyncThunk<
   }
   return rejectWithValue("Unknown error occurred");
 });
+
+const { setDeletedId } = documentsSlice.actions;
 
 export default documentsSlice.reducer;

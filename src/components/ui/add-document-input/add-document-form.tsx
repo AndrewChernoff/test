@@ -1,23 +1,11 @@
 import Button from "@material-ui/core/Button";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ZodType, z } from "zod";
+import { SubmitHandler } from "react-hook-form";
 import { Input } from "../../conrolled/input";
 import { useAppDispatch } from "../../../hooks/redux-hooks";
 import { addDocThunk } from "../../../features/documents/documents";
-import s from "./add-document-form.module.scss";
 import { DocForm } from "../../../common/types";
-
-const DocSchema: ZodType<DocForm> = z.object({
-  companySigDate: z.string().min(9, { message: "format is MM/DD/YYYY" }),
-  companySignatureName: z.string().min(1, { message: "field is required" }),
-  documentName: z.string().min(1, { message: "field is required" }),
-  documentStatus: z.string().min(1, { message: "field is required" }),
-  documentType: z.string().min(1, { message: "field is required" }),
-  employeeNumber: z.string().min(1, { message: "field is required" }),
-  employeeSigDate: z.string().min(9, { message: "format is MM/DD/YYYY" }),
-  employeeSignatureName: z.string().min(1, { message: "field is required" }),
-});
+import { useAddEditItem } from "../../../common/hooks/useAddEditItem";
+import s from "./add-document-form.module.scss";
 
 type PropsType = {
   closeModal: () => void
@@ -26,24 +14,7 @@ type PropsType = {
 export const AddDocumentForm = ({closeModal} : PropsType) => {
   const dispatch = useAppDispatch();
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    reset,
-  } = useForm<DocForm>({
-    resolver: zodResolver(DocSchema),
-    defaultValues: {
-      companySigDate: "",
-      companySignatureName: "",
-      documentName: "",
-      documentStatus: "",
-      documentType: "",
-      employeeNumber: "",
-      employeeSigDate: "",
-      employeeSignatureName: "",
-    },
-  });
+  const { handleSubmit, control, errors, reset } = useAddEditItem()
 
   const onSubmit: SubmitHandler<DocForm> = async (data) => {
     dispatch(addDocThunk(data));

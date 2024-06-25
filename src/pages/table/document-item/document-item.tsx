@@ -1,6 +1,7 @@
 import { DocumentType } from "../../../features/documents/types";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useAppDispatch } from "../../../hooks/redux-hooks";
+import IconButton from "@mui/material/IconButton";
+import { useAppDispatch, useAppSelector } from "../../../hooks/redux-hooks";
 import { removeDocThunk } from "../../../features/documents/documents";
 import { useState } from "react";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -12,12 +13,15 @@ type PropsType = {
 };
 
 export const DocumentItem = ({ document }: PropsType) => {
+  const deletedId = useAppSelector(state => state.documents.deletedId);
+
   const [editMode, setEditMode] = useState(false);
 
   const dispatch = useAppDispatch();
 
   const removeDocHandler = (id: string) => dispatch(removeDocThunk({ id }));
   const setEditFalse = () => setEditMode(false);
+
   return (
     <tr className={s.row}>
       {!editMode ? (
@@ -31,10 +35,10 @@ export const DocumentItem = ({ document }: PropsType) => {
 
           <td>{document.employeeSignatureName}</td>
           <td>
-            <button onClick={() => removeDocHandler(document.id)}>
+            <IconButton disabled={deletedId === document.id} onClick={() => removeDocHandler(document.id)}>
               <DeleteIcon />
-            </button>
-            <button onClick={() => setEditMode(!editMode)}><ModeEditIcon /></button>
+            </IconButton>
+            <IconButton onClick={() => setEditMode(!editMode)}><ModeEditIcon /></IconButton>
           </td>
         </>
       ) : (
