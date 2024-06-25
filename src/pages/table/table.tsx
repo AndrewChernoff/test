@@ -73,11 +73,11 @@ export const Table = () => {
           </table>
         )}
 
-        <Dialog open={open} onClose={openHandler} className={s.modal}>
+        <Dialog className={s.modal} open={open} onClose={openHandler} >
           <AddDocumentForm closeModal={openHandler} />
         </Dialog>
 
-        <Button variant="contained" size="large" onClick={openHandler}>
+        <Button style={{marginTop: '10px'}} variant="contained" size="large" onClick={openHandler}>
           Add document
         </Button>
       </div>
