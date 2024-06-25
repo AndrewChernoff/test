@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet, RouterProvider } from "react-router-dom";
-import { Signin } from "../pages/signup-page/signin";
+import { Signin } from "../pages/signin-page/signin";
 import { Table } from "../pages/table/table";
 import { useEffect } from "react";
 import { useAppDispatch } from "../hooks/redux-hooks";
