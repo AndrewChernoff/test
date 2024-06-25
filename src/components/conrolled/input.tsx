@@ -13,6 +13,7 @@ type PropsType<T extends FieldValues> = Omit<
   className: string;
   placeholder: string;
   error?: string;
+  type?: string 
 };
 
 export const Input = <T extends FieldValues>({
@@ -22,6 +23,7 @@ export const Input = <T extends FieldValues>({
   className,
   placeholder,
   error,
+  type
 }: PropsType<T>) => {
   const {
     field,
@@ -32,6 +34,7 @@ export const Input = <T extends FieldValues>({
 
   return (
     <TextField
+      type={type}
       error={!!error}
       helperText={error}
       className={className}

@@ -14,23 +14,30 @@ export interface AuthState {
   items: DocumentType[];
   isLoading: boolean;
   error: null | string;
-  deletedId: null | string;
+  deletedIds: string[];
 }
 
 const initialState: AuthState = {
   isLoading: false,
   items: [],
   error: null,
-  deletedId: null,
+  deletedIds: [],
 };
 
 export const documentsSlice = createSlice({
   name: "documents",
   initialState,
   reducers: {
-    setDeletedId: (state, action: PayloadAction<string | null>) => {
-      state.deletedId = action.payload;
+    setdeletedIds: (state, action: PayloadAction<string | null>) => {
+      if (action.payload) {
+        state.deletedIds.push(action.payload);
+      } else {
+        state.deletedIds = []
+      }
     },
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -91,7 +98,6 @@ export const documentsSlice = createSlice({
         (state, action: any) => {
           state.isLoading = false;
           state.error = action.error.message || "Some Error!";
-          alert(action.error.message);
         }
       );
   },
@@ -147,12 +153,12 @@ export const removeDocThunk = createAsyncThunk<
   { rejectValue: string }
 >("documents/removeDoc", async (data, { dispatch, rejectWithValue }) => {
   try {
-    dispatch(setDeletedId(data.id));
+    dispatch(setdeletedIds(data.id));
 
     const res = await api.deleteDocument(data.id);
 
     if (res.data.error_code === 0) {
-      dispatch(setDeletedId(null));
+      dispatch(setdeletedIds(null));
       return { id: data.id };
     } else if (res.data.error_code === 2004) {
       return rejectWithValue(res.data.error_text);
@@ -190,6 +196,6 @@ export const updateDocThunk = createAsyncThunk<
   return rejectWithValue("Unknown error occurred");
 });
 
-const { setDeletedId } = documentsSlice.actions;
+export const { setdeletedIds, setError } = documentsSlice.actions;
 
 export default documentsSlice.reducer;

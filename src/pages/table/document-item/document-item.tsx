@@ -13,7 +13,7 @@ type PropsType = {
 };
 
 export const DocumentItem = ({ document }: PropsType) => {
-  const deletedId = useAppSelector(state => state.documents.deletedId);
+  const deletedIds = useAppSelector(state => state.documents.deletedIds);
 
   const [editMode, setEditMode] = useState(false);
 
@@ -21,6 +21,8 @@ export const DocumentItem = ({ document }: PropsType) => {
 
   const removeDocHandler = (id: string) => dispatch(removeDocThunk({ id }));
   const setEditFalse = () => setEditMode(false);
+
+  const isDisabled = deletedIds.some(el => el === document.id);
 
   return (
     <tr className={s.row}>
@@ -35,7 +37,7 @@ export const DocumentItem = ({ document }: PropsType) => {
 
           <td>{document.employeeSignatureName}</td>
           <td>
-            <IconButton disabled={deletedId === document.id} onClick={() => removeDocHandler(document.id)}>
+            <IconButton disabled={isDisabled} onClick={() => removeDocHandler(document.id)}>
               <DeleteIcon />
             </IconButton>
             <IconButton onClick={() => setEditMode(!editMode)}><ModeEditIcon /></IconButton>

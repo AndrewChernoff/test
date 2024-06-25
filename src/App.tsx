@@ -3,6 +3,8 @@ import { useAppSelector } from './hooks/redux-hooks';
 import { Router } from './router/router'
 import LinearProgress from '@material-ui/core/LinearProgress';
 
+
+
 function App() {
 
   const isItemsLoading = useAppSelector(state => state.documents.isLoading)
@@ -11,6 +13,7 @@ function App() {
   return (
     <>
      {(isItemsLoading || isSignInLoading) && <LinearProgress/>}
+     
      <Router />
     </>
   )

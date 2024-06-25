@@ -1,10 +1,10 @@
 import { createBrowserRouter, Navigate, Outlet, RouterProvider } from "react-router-dom";
-import { Signin } from "../pages/signin-page/signin";
-import { Signup } from "../pages/signup-page/signup";
+import { Signin } from "../pages/signup-page/signin";
 import { Table } from "../pages/table/table";
 import { useEffect } from "react";
 import { useAppDispatch } from "../hooks/redux-hooks";
 import { authMe } from "../features/auth/auth";
+import { NotFound } from "../pages/not-found/not-found";
 
 const publicRoutes = [
   {
@@ -12,8 +12,8 @@ const publicRoutes = [
     element: <Signin />,
   },
   {
-    path: "/sign-up",
-    element: <Signup />,
+    path: "/*",
+    element: <NotFound />,
   },
 ];
 
@@ -34,7 +34,7 @@ const PrivateRoute = () => {
     }, [dispatch])
     
 
-    return isAuth === false ? <Navigate to="/sign-up" /> : <Outlet />
+    return isAuth === false ? <Navigate to="/sign-in" /> : <Outlet />
 }
 
 const router = createBrowserRouter([
