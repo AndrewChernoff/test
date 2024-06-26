@@ -18,7 +18,7 @@ export const useAddEditItem = () => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isDirty  },
     reset,
     setValue
   } = useForm<DocForm>({
@@ -35,5 +35,5 @@ export const useAddEditItem = () => {
     },
   });
 
-  return { handleSubmit, control, errors, reset, setValue };
+  return { handleSubmit, control, errors, reset, setValue, isDirty };
 };

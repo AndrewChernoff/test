@@ -17,7 +17,7 @@ type PropsType = {
 export const EditItem = ({ document, setEditFalse }: PropsType) => {
   const dispatch = useAppDispatch();
 
-  const { handleSubmit, control, errors, setValue } = useAddEditItem()
+  const { handleSubmit, control, errors, isDirty, setValue } = useAddEditItem()
 
   useEffect(() => {
     for (const prop in document) {
@@ -109,7 +109,7 @@ export const EditItem = ({ document, setEditFalse }: PropsType) => {
         />
       </td>
       <td className={s.editActionBtns}>
-        <Button variant="contained"  onClick={handleSubmit(updateDockHandler)}>update</Button>
+        <Button variant="contained" disabled={!isDirty} onClick={handleSubmit(updateDockHandler)}>update</Button>
         <Button variant="contained"  onClick={setEditFalse}>cancel</Button>
       </td>
     </>
