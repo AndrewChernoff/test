@@ -17,8 +17,8 @@ interface IFormInputs {
 }
 
 export const SigninSchema: ZodType<IFormInputs> = z.object({
-  username: z.string().min(5, { message: "Username is too short" }),
-  password: z.string().min(8, { message: "Password is too short" }),
+  username: z.string().min(5, { message: "Username is too short. Must be 5 characters" }),
+  password: z.string().min(8, { message: "Password is too short. Must be 8 characters" }),
 });
 
 export const Signin = () => {
