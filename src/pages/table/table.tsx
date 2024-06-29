@@ -37,7 +37,6 @@ export const Table = () => {
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/sign-in");
-
   }
 
   return (

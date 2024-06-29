@@ -1,10 +1,12 @@
 import { Typography, Button } from "@material-ui/core";
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@mui/material/Alert';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z, ZodType } from "zod";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
-import { authMe, loginThunk } from "../../features/auth/auth";
-import { useEffect } from "react";
+import { authMe, loginThunk, setAuthError } from "../../features/auth/auth";
+import { SyntheticEvent, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { Input } from "../../components/conrolled/input";
 import s from "./signin.module.scss";
@@ -21,7 +23,7 @@ export const SigninSchema: ZodType<IFormInputs> = z.object({
 
 export const Signin = () => {
   const dispatch = useAppDispatch();
-  const isAuth = useAppSelector(state => state.auth.isAuth)
+  const {isAuth, error} = useAppSelector(state => state.auth)
 
   useEffect(() => {
     dispatch(authMe())
@@ -45,6 +47,14 @@ export const Signin = () => {
     reset();
   };
 
+  const handleClose = (_event?: SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    dispatch(setAuthError(null));
+  };
+
 
   if (isAuth) {
     return <Navigate to="/" />;
@@ -52,6 +62,11 @@ export const Signin = () => {
 
   return (
     <>
+    <Snackbar open={!!error} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert onClose={handleClose} severity="error">
+          {error}
+        </Alert>
+      </Snackbar>
       <form className={s.form} onSubmit={handleSubmit(onSubmit)}>
         <Typography variant="h5">Sign in</Typography>
         <Input

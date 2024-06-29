@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "../../api/api";
 import { AxiosError } from "axios";
 import { AuthUserType } from "./types";
@@ -28,6 +28,10 @@ export const authSlice = createSlice({
         state.isAuth = false;
       }
     },
+    setAuthError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload
+    }
+
   },
   extraReducers: (builder) => {
     builder.addCase(loginThunk.fulfilled, (state) => {
@@ -40,8 +44,6 @@ export const authSlice = createSlice({
       builder.addCase(loginThunk.rejected, (state, action: any) => {
         state.isLoading = false;
         state.error = action.error.message || "Some Error!";
-        alert(action.error.message)
-
       });
   },
 });
@@ -58,7 +60,7 @@ export const loginThunk = createAsyncThunk<
       const token = res.data.data.token;
       localStorage.setItem("token", token);
     } if (res.data.error_code === 2004) {
-      rejectWithValue(res.data.error_text)
+      return rejectWithValue(res.data.error_text)
   }
   } catch (error) {
     const axiosError = error as AxiosError<ErrorResponse>;
@@ -69,6 +71,6 @@ export const loginThunk = createAsyncThunk<
   }
 });
 
-export const { authMe } = authSlice.actions;
+export const { authMe, setAuthError } = authSlice.actions;
 
 export default authSlice.reducer;
